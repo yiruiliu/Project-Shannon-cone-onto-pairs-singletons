@@ -1,1 +1,60 @@
+int2set:=function(int)
+local k,q,r, A,Binary;
+	k:=int;
+	Binary:=[];
+	while k>0 do
+		r:=k mod 2;
+		k:=QuoInt(k,2);
+		Append(Binary,[r]);
+	od;
+	A:=Positions(Binary,1);
+	return A;
+end;
 
+####ncinstance:=[ [ [ 1, 2 ], [ 1, 3 ], [ 1, 4 ], [ 2, 3 ], [ 2, 4 ], [ 3, 4 ] ], 2, 4 ];
+Permute_marginalAndJoin:=function(ncinstance)
+	local A,numofVar,i;
+	numofVar:=ncinstance[3];
+	A:=[set2int([numofVar])+2^numofVar..set2int([numofVar])+2^(numofVar+1)-2];
+	for i in [1..numofVar] do
+		A[set2int([i])]:=set2int([i]);
+	od;
+	for i in [1..Size(ncinstance[1])] do
+		A[set2int(ncinstance[1][i])]:=set2int([numofVar])+set2int(ncinstance[1][i]);
+	od;
+	return A;
+end;
+
+###permute clolumns of B
+Permute_matrix_parallel:=function(B,A)
+	local Bt,Bf,A1;
+	Bt:=TransposedMat(B);
+	Bt:=ShallowCopy(Bt);
+	A1:=ShallowCopy(A);
+	SortParallel(A1,Bt);
+	Bf:=TransposedMat(Bt);
+	return [Bf,A1];
+end;
+
+pairsEntropy:=function(N)
+local variableset,pairs,JEntropy;
+variableset:=[1..N];
+pairs:=Combinations(variableset,2);
+JEntropy:=[pairs,0,N];
+return JEntropy;
+end;
+
+ProjectShannonOntoPairs:=function(N)
+local ShOB,JEntropy,indi,SH,Sb,SH_PP,SH_P,indi_P,G,rlist1;
+JEntropy:=pairsEntropy(N);
+indi:=Permute_marginalAndJoin(JEntropy);
+ShOB:=GenShannonBounded(N);
+SH:=ShallowCopy(ShOB[1]);
+Sb:=ShallowCopy(ShOB[2]);
+SH_PP:=Permute_matrix_parallel(SH,indi);
+SH_P:=SH_PP[1];
+indi_P:=SH_PP[2];
+G := Group( [ () ] );
+rlist1:=symCHM( SH_P, Sb, [], N, G, OnProjPts, OnProjIneq, false );
+return rlist1;
+end;
