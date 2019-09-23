@@ -1,5 +1,5 @@
 int2set:=function(int)
-local k,q,r, A,Binary;
+	local k,q,r, A,Binary;
 	k:=int;
 	Binary:=[];
 	while k>0 do
