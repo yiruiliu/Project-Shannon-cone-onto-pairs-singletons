@@ -37,25 +37,25 @@ Permute_matrix_parallel:=function(B,A)
 end;
 
 pairsEntropy:=function(N)
-local variableset,pairs,JEntropy;
-variableset:=[1..N];
-pairs:=Combinations(variableset,2);
-JEntropy:=[pairs,0,N];
-return JEntropy;
+	local variableset,pairs,JEntropy;
+	variableset:=[1..N];
+	pairs:=Combinations(variableset,2);
+	JEntropy:=[pairs,0,N];
+	return JEntropy;
 end;
 
 ProjectShannonOntoPairs:=function(N)
-local ShOB,JEntropy,indi,SH,Sb,SH_PP,SH_P,indi_P,G,rlist1,number;
-JEntropy:=pairsEntropy(N);
-indi:=Permute_marginalAndJoin(JEntropy);
-ShOB:=GenShannonBounded(N);
-SH:=ShallowCopy(ShOB[1]);
-Sb:=ShallowCopy(ShOB[2]);
-SH_PP:=Permute_matrix_parallel(SH,indi);
-SH_P:=SH_PP[1];
-indi_P:=SH_PP[2];
-G := Group( [ () ] );
-number:=N+N*(N-1)/2;
-rlist1:=symCHM( SH_P, Sb, [], number, G, OnProjPts, OnProjIneq, false );
-return rlist1;
+	local ShOB,JEntropy,indi,SH,Sb,SH_PP,SH_P,indi_P,G,rlist1,number;
+	JEntropy:=pairsEntropy(N);
+	indi:=Permute_marginalAndJoin(JEntropy);
+	ShOB:=GenShannonBounded(N);
+	SH:=ShallowCopy(ShOB[1]);
+	Sb:=ShallowCopy(ShOB[2]);
+	SH_PP:=Permute_matrix_parallel(SH,indi);
+	SH_P:=SH_PP[1];
+	indi_P:=SH_PP[2];
+	G := Group( [ () ] );
+	number:=N+N*(N-1)/2;
+	rlist1:=symCHM( SH_P, Sb, [], number, G, OnProjPts, OnProjIneq, false );
+	return rlist1;
 end;
