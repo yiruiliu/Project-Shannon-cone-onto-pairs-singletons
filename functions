@@ -45,10 +45,10 @@ pairsEntropy:=function(N)
 end;
 
 ProjectShannonOntoPairs:=function(N)
-	local ShOB,JEntropy,indi,SH,Sb,SH_PP,SH_P,indi_P,G,rlist1,number;
+	local ShOB,JEntropy,indi,SH,Sb,SH_PP,SH_P,indi_P,G,rlist1,number,a,b,ab;
 	JEntropy:=pairsEntropy(N);
 	indi:=Permute_marginalAndJoin(JEntropy);
-	ShOB:=GenShannonBounded(N);
+	ShOB:= GenShannonUnBounded(N);
 	SH:=ShallowCopy(ShOB[1]);
 	Sb:=ShallowCopy(ShOB[2]);
 	SH_PP:=Permute_matrix_parallel(SH,indi);
@@ -56,6 +56,12 @@ ProjectShannonOntoPairs:=function(N)
 	indi_P:=SH_PP[2];
 	G := Group( [ () ] );
 	number:=N+N*(N-1)/2;
+	a := ZeroMutable([1..number]) + 1;
+	b :=  ZeroMutable([1..Size(SH_P[1])-number]);
+	ab := Concatenation(a,b);
+	SH_P := ShallowCopy(SH_P);
+	Append(SH_P,[ab]);
+	Append(Sb,[number]);
 	rlist1:=symCHM( SH_P, Sb, [], number, G, OnProjPts, OnProjIneq, false );
 	return rlist1;
 end;
